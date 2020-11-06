@@ -1,4 +1,4 @@
-# **Manual for CUHKPrototypeTunerV2
+# Manual for CUHKPrototypeTunerV2
 
 ## Install CUHKPrototypeTunerV2
 
@@ -72,14 +72,11 @@
    advisor:
      builtinAdvisorName: CUHKPrototypeTunerV2
      classArgs:
-       min_budget: 1
-       # max budget for each trial
-       max_budget: 25
-       eta: 5
+       num_epochs: 25
    trial:
      command: python ./bin/train_elmo.py --train_prefix=./data/one_billion/1-billion-word-language-modeling-benchmark-r13output/training-monolingual.tokenized.shuffled/* --vocab_file ./data/vocab-2016-09-10.txt --save_dir ./output_model
      codeDir: .
-     # specific the number of GPU used by each trial
+     # specifiy the number of GPU used by each trial
      gpuNum: 4
    localConfig:
      # specific index of GPU used by the experiment, just like CUDA_VISIBLE_DEVICES
@@ -151,16 +148,14 @@ wget https://raw.githubusercontent.com/wuzhuoming/CUHKPrototypeTunerV2/main/trai
    advisor:
      builtinAdvisorName: CUHKPrototypeTunerV2
      classArgs:
-       min_budget: 1
-       max_budget: 25
-       eta: 5
+       num_epochs: 25
    trial:
      command: python wrap_program_mbart.py
      codeDir: .
-     # specific the number of GPU used by each trial
+     # specifiy the number of GPU used by each trial
      gpuNum: 4
    localConfig:
-     # specific index of GPU used by the experiment, just like CUDA_VISIBLE_DEVICES
+     # specifiy index of GPU used by the experiment, just like CUDA_VISIBLE_DEVICES
      gpuIndices: "0,1,2,3"
    EOF
    ```
@@ -226,16 +221,14 @@ wget https://raw.githubusercontent.com/wuzhuoming/CUHKPrototypeTunerV2/main/trai
    advisor:
      builtinAdvisorName: CUHKPrototypeTunerV2
      classArgs:
-       min_budget: 1
-       max_budget: 25
-       eta: 5
+       num_epochs: 25
    trial:
      command: python wrap_program_mass.py
      codeDir: .
-     # specific the number of GPU used by each trial
+     # specifiy the number of GPU used by each trial
      gpuNum: 4
    localConfig:
-     # specific index of GPU used by the experiment, just like CUDA_VISIBLE_DEVICES
+     # specifiy index of GPU used by the experiment, just like CUDA_VISIBLE_DEVICES
      gpuIndices: "0,1,2,3"
    EOF
    ```
@@ -349,7 +342,7 @@ nnictl stop egchD4qy # egchD4qy is the experiment id provided by the tuner when 
 To resume the experiment you stop:
 
 ```bash
-nnictl resume egchD4qy # egchD4qy is the experiment id provided by the tuner when you launch it 
+nnictl resume egchD4qy
 ```
 
 ## Get the trained model
@@ -406,10 +399,7 @@ useAnnotation: false
 advisor:
   builtinAdvisorName: CUHKPrototypeTunerV2
   classArgs:
-    min_budget: 1
-    # max budget for each trial
-    max_budget: 25
-    eta: 5
+    num_epochs: 25
 trial:
   command: python ./bin/train_elmo.py --train_prefix=./data/one_billion/1-billion-word-language-modeling-benchmark-r13output/training-monolingual.tokenized.shuffled/* --vocab_file ./data/vocab-2016-09-10.txt --save_dir ./output_model
   codeDir: .
@@ -433,13 +423,11 @@ Usually it shows up like this:
 
 ![Error Training service error: GPU not available. Please check your CUDA  configuration · Issue #2463 · microsoft/nni · GitHub](https://user-images.githubusercontent.com/23012102/82327761-723ddd80-9a11-11ea-9801-e42ba41b1321.png)
 
-Then you can go to check the dispatcher.log and nnimanager.log to see if there any report about this error.
+Then you can go to check the ``dispatcher.log`` and ``nnimanager.log`` to see if there is any report about this error.
 
-To check dispatcher.log & nnimanager.log:
+To check ``dispatcher.log`` and ``nnimanager.log``, click ``Download`` -> ``Log files``: 
 
-Click Download -> Logfiles: 
-
-![Fix Python Neural Network Intelligence (NNI) Trial Jobs Status is Failed -  Python NNI Tutorial](https://www.tutorialexample.com/wp-content/uploads/2020/05/view-python-nni-logfiles.png)
+![Fix Python Neural Network Intelligence (NNI) Trial Jobs Status is Failed -  Python NNI Tutorial](https://lh3.googleusercontent.com/-NNAW85KsnLs/X6U0zru4bKI/AAAAAAAAAk0/2FGmNf1__TkvVNg0lORbd0Tb3z2WohCPgCK8BGAsYHg/s0/2020-11-06.png)
 
 Then you can see the dispatcher.log and nnimanager.log:
 
@@ -449,85 +437,65 @@ Then you can see the dispatcher.log and nnimanager.log:
 
 Usually it shows up like this:
 
-![Fix Python Neural Network Intelligence (NNI) Trial Jobs Status is Failed -  Python NNI Tutorial](https://www.tutorialexample.com/wp-content/uploads/2020/05/python-nni-trial-job-status-is-failed.png)
+![Fix Python Neural Network Intelligence (NNI) Trial Jobs Status is Failed -  Python NNI Tutorial](https://lh3.googleusercontent.com/-17ORUYET3Sc/X6UzVllmWfI/AAAAAAAAAko/ntLMr1vYmW4MatxbFx6K7XMmS0gW3zFNwCK8BGAsYHg/s0/2020-11-06.png)
 
-you can check the trial output directory to track the error.
+You can check the trial output directory to track the error.
 
-Click the failed trail -> log:
+Click the failed trail -> Log:
 
-![../_images/trial_error.jpg](https://nni.readthedocs.io/en/latest/_images/trial_error.jpg)
+![](https://lh3.googleusercontent.com/-atXbfdTeb-M/X4bAFeI1DkI/AAAAAAAAAh0/Cfrh7mZWXKU2kXAXJ2XTg6AgGOq12VpWgCK8BGAsYHg/s0/2020-10-14.png)
 
-Then follow the path it specify, you can see the directory content like this:
+Clicking the two blue buttons will show you the corresponding contents. Or once you want to access those trial files, you can enter the ``Log path``:
 
 ![All trails are getting failed · Issue #1367 · microsoft/nni · GitHub](https://user-images.githubusercontent.com/8463288/62023228-82769900-b202-11e9-98b4-0a2dd02c8e8b.png)
 
-"trial.log" contain the training program output, such as user defined "print" and training output.
+``trial.log`` contain the training program standard output, such as user defined "print".
 
-"stderr" contain the error message generate from the training program.
+``stderr`` contain the error message generated from the training program.
 
 ## Upgrade from V1
 
-1.Config file upgrade:
+1. Config file
 
-We use successive halving in CUHKPrototypeTunerV2, so update the config file from v1.
+   There is a necessary modification in config file. Please replace the corresponding codes according to the following example.
 
-```yml
-#CUHKPrototypeTunerV1
-tuner:
-  builtinTunerName: CUHKPrototypeTuner
-  
-#CUHKPrototypeTunerV2
-advisor:
-  builtinAdvisorName: CUHKPrototypeTunerV2
-  classArgs:
-    min_budget: 1
-    max_budget: 25
-    eta: 5
-```
+   ### Original (CUHKPrototypeTuner):
 
-We add three parameters for user to define their own experiment process,
+   ```yml
+   tuner:
+     builtinTunerName: CUHKPrototypeTuner
+   ```
 
-​	--min_budget: The minimum trial budget that can be allocated to a configuration. Here, trial budget could mean the number of epochs.
+   ### New (CUHKPrototypeTunerV2):
 
-​	--max_budget: The maximum trial budget that can be allocated to a configuration. Here, trial budget could mean the number of epochs.
+   ```yml
+   advisor:
+     builtinAdvisorName: CUHKPrototypeTunerV2
+     classArgs:
+       num_epochs: 40
+   ```
 
-​	--eta: Means `n/eta` configurations from `n` configurations will survive and continue training using more budgets.
+   ``num_epochs`` refers to the maximum or commonly-used number of epochs in your training, e.g. 40.
 
-For example, from above config file, we set max_budget = 25, min_budget = 1, eta = 5. In this case, s_max = 2, so we will continuously run the {s=2, s=1, s=0, s=2, s=1, s=0, …} cycle. In each stage of SuccessiveHalving (the orange box), we will pick the top 1/eta configurations and run them again with more budget, repeating the SuccessiveHalving stage until the end of this iteration.
+2. Training program
 
---Trial Concurrency = 1:
+   
 
-| TrialConcurrency=1 |  s=2  |  s=1  |  s=0  |
-| :----------------: | :---: | :---: | :---: |
-|         i          | n  r  | n  r  | n  r  |
-|         0          | 25  1 | 8  5  | 3  25 |
-|         1          | 5  5  | 1  25 |       |
-|         2          | 1  25 |       |       |
+3. Directory of model checkpoint:
 
---Trial Concurrency = 2:
-
-| TrialConcurrency=2 |  s=2  |  s=1  |  s=0  |
-| :----------------: | :---: | :---: | :---: |
-|         i          | n  r  | n  r  | n  r  |
-|         0          | 26  1 | 8  5  | 4  25 |
-|         1          | 6  5  | 2  25 |       |
-|         2          | 2  25 |       |       |
-
-`s` means bucket, `n` means the number of configurations that are generated, the corresponding `r` means how many budgets these configurations run. `i` means round, for example, bucket 2 has 3 rounds, bucket 1 has 2 rounds.
-
-2. Model checkpoint location:
-
-   The location to retrieve the model checkpoint is change. we create a directory name "trialID-trialBudget-HashParameter" to store the train model for each trial. You can track the trail with its unique trial ID, or track trials that with specified budget.
+   The directories storing model checkpoints are renamed to ``{trialID}-{trialEpochs}-{configID}``. You can track the trail with its unique trial ID or specific budget.
 
    ```bash
-   #CUHKPrototypeTunerV1
-   #{output directory}/trialID, example:
-   {output directory}/DKqsP 
+   # tuner: CUHKPrototypeTuner
+   # format: {output directory}/trialID
+   # example:
+   {output directory}/DKqsP
    
-   #CUHKPrototypeTunerV2
-   #{output directory}/trialID-trialBudeget-HashParameter, example:
+   # tuner: CUHKPrototypeTunerV2
+   # format: {output directory}/{trialID}-{trialEpochs}-{configID}
+   # example:
    {output directory}/cyXHO-3-5dd5dbcbbc1983b7
    ```
 
-   What's more, according to successive halving, we will pick a configuration and allocated more budget to run it, at that time, we will restore checkpoint from the directory with same HashParameter and continue training until the new budget be exhausted. Meanwhile, the checkpoint directory with same HashParameters and lower budget will be deleted.
+   During tuning, the tuner would maintain and may utilize such directories. Please do not delete them unless the training is finished or you are sure about such deletion.
 
