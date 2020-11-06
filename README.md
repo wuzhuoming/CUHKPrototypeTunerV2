@@ -1,6 +1,6 @@
 # **Manual for CUHKPrototypeTunerV2
 
-## Install DFHB
+## Install CUHKPrototypeTunerV2
 
 1. Run the following command 
 
