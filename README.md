@@ -477,11 +477,7 @@ Clicking the two blue buttons will show you the corresponding contents. Or once 
 
    ``num_epochs`` refers to the maximum or commonly-used number of epochs in your training, e.g. 40.
 
-2. Training program
-
-   
-
-3. Directory of model checkpoint:
+2. Directory of model checkpoint:
 
    The directories storing model checkpoints are renamed to ``{trialID}-{trialEpochs}-{configID}``. You can track the trail with its unique trial ID or specific budget.
 
