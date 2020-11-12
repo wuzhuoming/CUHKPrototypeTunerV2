@@ -753,7 +753,7 @@ def train(options, data, n_gpus, gpu_index, tf_save_dir, tf_log_dir,session_conf
         histogram_summaries.extend(
             summary_gradient_updates(grads, opt, lr))
 
-        saver = tf.train.Saver(tf.global_variables(), max_to_keep=2)
+        saver = tf.train.Saver(tf.global_variables(), max_to_keep=1)
         summary_op = tf.summary.merge(
             [perplexity_summmary] + norm_summaries
         )
@@ -891,7 +891,7 @@ def train(options, data, n_gpus, gpu_index, tf_save_dir, tf_log_dir,session_conf
             if (batch_no % 1250 == 0) or (batch_no == n_batches_total):
                 # save the model
                 checkpoint_path = os.path.join(tf_save_dir, 'model.ckpt')
-                saver.save(sess, checkpoint_path, global_step=global_step)
+                saver.save(sess, checkpoint_path)
 
             if batch_no == n_batches_total:
                 # done training!
