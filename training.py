@@ -672,8 +672,8 @@ def _get_feed_dict_from_X(X, start, end, model, char_inputs, bidirectional):
     return feed_dict
 
 
-def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
-          optimizer,hw_config,restart_ckpt_file=None):
+def train(options, data, n_gpus, gpu_index, tf_save_dir, tf_log_dir,session_config,
+          restart_ckpt_file=None):
 
     # not restarting so save the options
     if restart_ckpt_file is None:
@@ -687,12 +687,9 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
 
         # set up the optimizer
         lr = options.get('learning_rate', 0.2)
-        if optimizer == "Adam":
-            opt = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.9, beta2=0.999, epsilon=1e-08, use_locking=False)
-        elif optimizer == "Rmsp":
-            opt = tf.train.RMSPropOptimizer(lr, decay=0.9, momentum=0.0, epsilon=1e-10, use_locking=False,centered=False)
-        else:
-            opt = tf.train.AdagradOptimizer(learning_rate=lr,initial_accumulator_value=1.0)
+        opt = tf.train.AdagradOptimizer(learning_rate=lr,initial_accumulator_value=1.0)
+        # opt = tf.train.RMSPropOptimizer(lr, decay=0.9, momentum=0.0, epsilon=1e-10, use_locking=False,centered=False)
+
 
         # calculate the gradients on each GPU
         tower_grads = []
@@ -701,9 +698,9 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
             'train_perplexity', [],
             initializer=tf.constant_initializer(0.0), trainable=False)
         norm_summaries = []
-        for k in range(n_gpus):
+        for k in gpu_index:
             with tf.device('/gpu:%d' % k):
-                with tf.variable_scope('lm', reuse=k > 0):
+                with tf.variable_scope('lm', reuse=tf.AUTO_REUSE):
                     # calculate the loss for one model replica and get
                     #   lstm states
                     model = LanguageModel(options, True)
@@ -766,7 +763,8 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
 
     # do the training loop
     bidirectional = options.get('bidirectional', False)
-    with tf.Session(config=hw_config) as sess:
+    # with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as sess:
+    with tf.Session(config=session_config) as sess:
         sess.run(init)
 
         # load the checkpoint data if needed
@@ -881,7 +879,6 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
                 )
                 init_state_values = ret[4:]
                 
-            final_perplexity = ret[2]
 
             if batch_no % 1250 == 0:
                 summary_writer.add_summary(ret[3], batch_no)
@@ -892,17 +889,17 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
                 print("Total time: %s" % (time.time() - t1))
 
             if (batch_no % 1250 == 0) or (batch_no == n_batches_total):
-            # if (batch_no % 10 == 0) or (batch_no == n_batches_total):
                 # save the model
                 checkpoint_path = os.path.join(tf_save_dir, 'model.ckpt')
-                saver.save(sess, checkpoint_path)
-                
+                saver.save(sess, checkpoint_path, global_step=global_step)
 
-            # if batch_no % 15 == 0:
             if batch_no == n_batches_total:
                 # done training!
                 break
+
+            final_perplexity = ret[2]
         return final_perplexity
+
 
 
 def clip_by_global_norm_summary(t_list, clip_norm, norm_name, variables):
