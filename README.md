@@ -14,7 +14,7 @@
 
    ```bash
    Installing collected packages: CUHKPrototypeTunerV2
-   Successfully installed CUHKPrototypeTunerV2-2
+   Successfully installed CUHKPrototypeTunerV2-2.1
    CUHKPrototypeTunerV2 installed!
    ```
 
