@@ -6,8 +6,8 @@
 
    ```bash
    pip install nni && \
-   wget https://github.com/vincentcheny/hpo-training/releases/download/cuhk_prototype_tuner_v2_2/CUHKPrototypeTunerV2-2-py3-none-any.whl && \
-   nnictl package install CUHKPrototypeTunerV2-2-py3-none-any.whl
+   wget https://github.com/vincentcheny/hpo-training/releases/download/cuhk_prototype_tuner_v2_2.1/CUHKPrototypeTunerV2-2.1-py3-none-any.whl && \
+   nnictl package install CUHKPrototypeTunerV2-2.1-py3-none-any.whl
    ```
 
 2. if success install, you should see this output  in the command line
@@ -37,8 +37,8 @@
    ```json
    cat << EOF > search_space.json
    {
-       "epoch":{"_type": "choice", "_value": [5,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50]},
-       "batch_size":{"_type": "choice", "_value": [64,80,96,112,128,144,160,176,192,208,224,240,256,272,288,304,320,336,352,368,384,400,416,432,448,464,480,496, 512]},
+       "epoch":{"_type": "uniform", "_value": [5, 50]},
+       "batch_size":{"_type": "uniform", "_value": [64, 512]},
        "inter_op_parallelism_threads":{"_type":"choice","_value":[1,2,3,4]},
        "intra_op_parallelism_threads":{"_type":"choice","_value":[2,4,6,8,10,12]},
        "infer_shapes":{"_type":"choice","_value":[0,1]},
